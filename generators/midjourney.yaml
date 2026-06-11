@@ -1,0 +1,136 @@
+# Midjourney generator plugin for Prompt Architect.
+#
+# ACCURACY CAVEAT — READ BEFORE TRUSTING:
+# Vendor option sets drift constantly (new model versions, renamed flags, changed
+# ranges). This file is a plain data file validated against
+# schemas/generator.schema.json; updating it requires NO code changes anywhere in
+# the app. That is the maintenance strategy: when Midjourney ships a change,
+# edit this YAML, bump `version`, update `lastVerified`, open a PR. Authored
+# against the public parameter list as of `lastVerified`; re-verify via `docsUrl`
+# before relying on it for production prompt generation.
+
+id: midjourney
+name: Midjourney
+modality: image
+version: 1.0.0
+targetVersion: "Midjourney v7 parameter set (v5.2–v7 selectable)"
+docsUrl: "https://docs.midjourney.com/docs/parameter-list"
+lastVerified: "2026-06-11"
+
+fields:
+  - key: subject
+    label: Subject / scene
+    type: string
+    required: true
+    multiline: true
+    placeholder: "a lighthouse keeper reading by candlelight, oil painting, dramatic chiaroscuro"
+    description: >-
+      The main prompt body. Midjourney weighs earlier words more heavily, so put
+      the subject first and modifiers after.
+
+  - key: style_refs
+    label: Style reference URLs (--sref)
+    type: string
+    placeholder: "https://example.com/ref1.png https://example.com/ref2.png"
+    description: >-
+      Space-separated image URLs whose visual style Midjourney should imitate.
+      Leave empty to omit the --sref flag entirely.
+
+  - key: negative
+    label: Exclude (--no)
+    type: string
+    placeholder: "text, watermark, frame"
+    description: >-
+      Comma-separated concepts to suppress. Rendered as a single --no flag;
+      omitted when empty.
+
+  - key: aspect_ratio
+    label: Aspect ratio (--ar)
+    type: enum
+    default: "1:1"
+    options:
+      - "1:1"
+      - "16:9"
+      - "9:16"
+      - "4:3"
+      - "3:4"
+      - "3:2"
+      - "2:3"
+      - "21:9"
+    description: Output width:height. Always emitted so results are reproducible.
+
+  - key: model_version
+    label: Model version (--v)
+    type: enum
+    default: "7"
+    options:
+      - { value: "7", label: "v7 (current)" }
+      - { value: "6.1", label: "v6.1" }
+      - { value: "6", label: "v6" }
+      - { value: "5.2", label: "v5.2 (legacy)" }
+    description: >-
+      Target model. Niji (anime) variants use the distinct --niji flag rather
+      than a --v value, which plain token substitution cannot express; they will
+      ship as a separate plugin or via computed tokens (see
+      docs/ARCHITECTURE.md, Known limitations).
+
+  - key: stylize
+    label: Stylize (--stylize)
+    type: number
+    default: 100
+    omitIfDefault: true
+    range: { min: 0, max: 1000, step: 10 }
+    description: >-
+      How strongly Midjourney's house aesthetic is applied. 100 is the
+      generator's own default, so the flag is omitted at 100 to keep prompts
+      minimal.
+
+  - key: chaos
+    label: Chaos (--chaos)
+    type: number
+    default: 0
+    omitIfDefault: true
+    range: { min: 0, max: 100, step: 1 }
+    description: Variation between the four grid images. 0 (default) omits the flag.
+
+  - key: weird
+    label: Weird (--weird)
+    type: number
+    default: 0
+    omitIfDefault: true
+    range: { min: 0, max: 3000, step: 50 }
+    description: Experimental off-beat aesthetics. 0 (default) omits the flag.
+
+  - key: seed
+    label: Seed (--seed)
+    type: number
+    range: { min: 0, max: 4294967295, step: 1 }
+    placeholder: "leave blank for random"
+    description: >-
+      Fixes the initial noise field for reproducible variations. No default:
+      blank means Midjourney picks a random seed and the flag is omitted.
+
+promptTemplate: >-
+  {{subject}}{{#style_refs}} --sref {{style_refs}}{{/style_refs}}{{#negative}}
+  --no {{negative}}{{/negative}} --ar {{aspect_ratio}} --v
+  {{model_version}}{{#stylize}} --stylize {{stylize}}{{/stylize}}{{#chaos}}
+  --chaos {{chaos}}{{/chaos}}{{#weird}} --weird {{weird}}{{/weird}}{{#seed}}
+  --seed {{seed}}{{/seed}}
+
+outputRules:
+  parameterOrder:
+    - subject
+    - style_refs
+    - negative
+    - aspect_ratio
+    - model_version
+    - stylize
+    - chaos
+    - weird
+    - seed
+  separator: " "
+  listSeparator: ", "
+  maxLength: 2000          # Discord message cap — the practical ceiling for /imagine
+  overflowStrategy: warn
+  collapseWhitespace: true
+  trim: true

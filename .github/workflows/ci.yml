@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Schema + plugin + HTML checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # The repo is deliberately dependency-free (no package.json committed);
+      # validator deps are installed ad hoc so the app itself stays zero-build.
+      - name: Install validator dependencies
+        run: |
+          npm init -y > /dev/null
+          npm install --no-save --no-audit --no-fund ajv@8 ajv-formats@3 js-yaml@4
+
+      - name: Validate generator plugins against meta-schema
+        run: node scripts/validate.mjs
+
+      - name: Validate PoC HTML
+        run: npx --yes html-validate@8 "app/index.html"

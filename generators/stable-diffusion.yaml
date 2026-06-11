@@ -1,0 +1,144 @@
+# Stable Diffusion (AUTOMATIC1111 / Forge style) generator plugin for Prompt Architect.
+#
+# ACCURACY CAVEAT — READ BEFORE TRUSTING:
+# Sampler lists, default steps and resolution conventions drift with every
+# WebUI release and model family (SD 1.5 vs SDXL vs SD3). This file is a plain
+# data file validated against schemas/generator.schema.json; updating it never
+# requires code changes — edit the YAML, bump `version`, update `lastVerified`,
+# open a PR. That IS the maintenance strategy. Authored against the
+# AUTOMATIC1111 WebUI conventions current at `lastVerified`.
+#
+# Output format note: the template emits the WebUI "generation parameters"
+# paste format (prompt / Negative prompt: / Steps: ... line), which the WebUI,
+# Forge and many forks can re-import verbatim via "Read generation parameters".
+
+id: stable-diffusion
+name: Stable Diffusion (A1111 WebUI)
+modality: image
+version: 1.0.0
+targetVersion: "AUTOMATIC1111 WebUI 1.10.x conventions, SDXL-era defaults"
+docsUrl: "https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Features"
+lastVerified: "2026-06-11"
+
+fields:
+  - key: positive_prompt
+    label: Prompt
+    type: string
+    required: true
+    multiline: true
+    placeholder: "masterpiece, ultra-detailed portrait of a clockwork owl, brass and copper, volumetric light"
+    description: >-
+      Positive prompt. Token order matters; weights like (word:1.2) are passed
+      through untouched.
+
+  - key: negative_prompt
+    label: Negative prompt
+    type: string
+    multiline: true
+    placeholder: "lowres, bad anatomy, watermark, jpeg artifacts"
+    description: Concepts to steer away from. The whole line is omitted when empty.
+
+  - key: steps
+    label: Sampling steps
+    type: number
+    default: 20
+    range: { min: 1, max: 150, step: 1 }
+    description: >-
+      Denoising iterations. 20–30 covers most samplers; high values trade time
+      for marginal gains.
+
+  - key: sampler
+    label: Sampler
+    type: enum
+    default: "DPM++ 2M Karras"
+    options:
+      - "DPM++ 2M Karras"
+      - "DPM++ SDE Karras"
+      - "DPM++ 2M SDE Exponential"
+      - "Euler a"
+      - "Euler"
+      - "Heun"
+      - "UniPC"
+      - "DDIM"
+    description: >-
+      Sampling algorithm. Names follow the A1111 dropdown verbatim so the paste
+      format round-trips.
+
+  - key: cfg_scale
+    label: CFG scale
+    type: number
+    default: 7
+    range: { min: 1, max: 30, step: 0.5 }
+    description: >-
+      Prompt adherence vs. creativity. 5–9 is the usual sweet spot; very high
+      values oversaturate.
+
+  - key: seed
+    label: Seed
+    type: number
+    default: -1
+    range: { min: -1, max: 4294967295, step: 1 }
+    description: "-1 lets the WebUI roll a random seed. Always emitted: the paste format expects the key."
+
+  - key: width
+    label: Width
+    type: number
+    default: 1024
+    unit: px
+    range: { min: 256, max: 2048, step: 64 }
+    description: SDXL native is 1024; use 512 for SD 1.5 checkpoints.
+
+  - key: height
+    label: Height
+    type: number
+    default: 1024
+    unit: px
+    range: { min: 256, max: 2048, step: 64 }
+    description: SDXL native is 1024; use 512 for SD 1.5 checkpoints.
+
+  - key: hires_fix
+    label: Hires. fix
+    type: boolean
+    default: false
+    description: Two-pass upscaled generation for detail beyond the base resolution.
+
+  - key: hires_upscaler
+    label: Hires upscaler
+    type: enum
+    default: "R-ESRGAN 4x+"
+    options:
+      - "Latent"
+      - "Latent (nearest-exact)"
+      - "R-ESRGAN 4x+"
+      - "ESRGAN_4x"
+      - "SwinIR 4x"
+      - "4x-UltraSharp"
+    dependsOn:
+      - { field: hires_fix, operator: truthy }
+    description: >-
+      Upscale model for the second pass. Only shown (and only emitted) when
+      Hires. fix is enabled — a worked example of the dependsOn mechanism.
+
+promptTemplate: |-
+  {{positive_prompt}}{{#negative_prompt}}
+  Negative prompt: {{negative_prompt}}{{/negative_prompt}}
+  Steps: {{steps}}, Sampler: {{sampler}}, CFG scale: {{cfg_scale}}, Seed: {{seed}}, Size: {{width}}x{{height}}{{#hires_fix}}, Hires upscaler: {{hires_upscaler}}{{/hires_fix}}
+
+outputRules:
+  parameterOrder:
+    - positive_prompt
+    - negative_prompt
+    - steps
+    - sampler
+    - cfg_scale
+    - seed
+    - width
+    - height
+    - hires_fix
+    - hires_upscaler
+  separator: " "
+  listSeparator: ", "
+  # No maxLength: A1111 chunks prompts past 75 CLIP tokens instead of refusing.
+  overflowStrategy: warn
+  collapseWhitespace: true   # horizontal whitespace only — the paste format's newlines survive
+  trim: true

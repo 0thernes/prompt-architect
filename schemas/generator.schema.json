@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://0thernes.art/prompt-architect/schemas/generator.schema.json",
+  "title": "Prompt Architect Generator Plugin",
+  "description": "Meta-schema for a generator plugin. A plugin is a pure data file (YAML or JSON) that teaches Prompt Architect how to build a one-shot prompt for one target generator: which fields to show, how to constrain them, and how to assemble their values into the generator's native prompt syntax. Plugins contain no code; updating a plugin never requires touching the application.",
+  "type": "object",
+  "required": ["id", "name", "modality", "version", "fields", "promptTemplate", "outputRules"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Stable machine identifier, kebab-case. Never changes once published; presets and history reference it."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable generator name shown in the UI, e.g. 'Midjourney'."
+    },
+    "modality": {
+      "enum": ["image", "video", "3d", "audio", "world"],
+      "description": "Primary output medium of the target generator. Drives UI grouping and filtering."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of THIS plugin file (not of the target generator). Bump patch for option updates, minor for new fields, major for breaking template changes."
+    },
+    "targetVersion": {
+      "type": "string",
+      "description": "Free-form note describing which release(s) of the target generator this plugin was authored against, e.g. 'Midjourney v7 parameter set'."
+    },
+    "docsUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Link to the vendor's authoritative parameter documentation, used when re-verifying the plugin."
+    },
+    "lastVerified": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO date a human last checked this plugin against the vendor docs. Plugins older than 90 days are flagged stale by tooling."
+    },
+    "fields": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/field" },
+      "description": "Ordered list of user-facing inputs. Order here is the form layout order; outputRules.parameterOrder controls prompt assembly order."
+    },
+    "promptTemplate": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Assembly template using token substitution. Syntax: '{{key}}' substitutes a field's formatted value ('' when unset). '{{#key}}...{{/key}}' is a conditional section emitted only when the field is set (non-empty, visible per dependsOn, and — when omitIfDefault is true — different from its default). Sections may contain tokens but do not nest. Example: '{{subject}} --ar {{aspect_ratio}}{{#seed}} --seed {{seed}}{{/seed}}'."
+    },
+    "outputRules": { "$ref": "#/$defs/outputRules" }
+  },
+  "$defs": {
+    "field": {
+      "type": "object",
+      "required": ["key", "label", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "description": "Token name used in promptTemplate, parameterOrder and dependsOn. snake_case, unique within the plugin."
+        },
+        "label": { "type": "string", "minLength": 1 },
+        "description": {
+          "type": "string",
+          "description": "Help text shown under the control. Explain what the parameter does in the TARGET generator's terms."
+        },
+        "type": {
+          "enum": ["string", "number", "boolean", "enum", "multi"],
+          "description": "string = free text; number = numeric with range; boolean = toggle; enum = single choice from options; multi = multiple choices from options, joined with outputRules.listSeparator."
+        },
+        "required": { "type": "boolean", "default": false },
+        "default": {
+          "type": ["string", "number", "boolean", "array", "null"],
+          "description": "Initial value. For enum/multi it must reference option value(s); checked by scripts/validate.mjs."
+        },
+        "placeholder": { "type": "string" },
+        "multiline": {
+          "type": "boolean",
+          "default": false,
+          "description": "string fields only: render a textarea instead of a single-line input."
+        },
+        "options": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/option" },
+          "description": "Required for enum/multi fields; forbidden elsewhere."
+        },
+        "range": { "$ref": "#/$defs/range" },
+        "unit": { "type": "string", "description": "Display-only unit suffix, e.g. 'px'." },
+        "omitIfDefault": {
+          "type": "boolean",
+          "default": false,
+          "description": "When true, conditional sections keyed on this field are skipped if the current value equals the default. Use for flags the generator already assumes (e.g. Midjourney --chaos 0) to keep prompts minimal."
+        },
+        "dependsOn": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/condition" },
+          "description": "All conditions must hold for the field to be visible. Hidden fields are treated as unset by the template engine."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "enum": ["enum", "multi"] } }, "required": ["type"] },
+          "then": { "required": ["options"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "number" } }, "required": ["type"] },
+          "then": { "required": ["range"] }
+        }
+      ]
+    },
+    "option": {
+      "oneOf": [
+        { "type": "string", "minLength": 1 },
+        {
+          "type": "object",
+          "required": ["value", "label"],
+          "additionalProperties": false,
+          "properties": {
+            "value": { "type": ["string", "number"] },
+            "label": { "type": "string", "minLength": 1 }
+          }
+        }
+      ],
+      "description": "Either a bare string (value doubles as label) or an explicit value/label pair."
+    },
+    "range": {
+      "type": "object",
+      "required": ["min", "max"],
+      "additionalProperties": false,
+      "properties": {
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "step": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "condition": {
+      "type": "object",
+      "required": ["field", "operator"],
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "Key of another field in this plugin."
+        },
+        "operator": { "enum": ["equals", "notEquals", "in", "notIn", "gte", "lte", "truthy"] },
+        "value": {
+          "description": "Comparison operand. Array for in/notIn, scalar otherwise, omitted for truthy."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "operator": { "enum": ["equals", "notEquals", "in", "notIn", "gte", "lte"] } }, "required": ["operator"] },
+          "then": { "required": ["value"] }
+        }
+      ]
+    },
+    "outputRules": {
+      "type": "object",
+      "required": ["separator", "parameterOrder"],
+      "additionalProperties": false,
+      "description": "Post-processing contract applied after template rendering, plus the canonical parameter ordering that CI enforces against the template.",
+      "properties": {
+        "parameterOrder": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string" },
+          "description": "Canonical ordering of ALL field keys. Single source of truth: scripts/validate.mjs asserts that the first occurrence of each token in promptTemplate respects this order, so template edits cannot silently reorder generator flags."
+        },
+        "separator": {
+          "type": "string",
+          "description": "String that runs of horizontal whitespace collapse to when collapseWhitespace is true. Newlines always survive (some targets, e.g. AUTOMATIC1111 paste format, are line-oriented)."
+        },
+        "listSeparator": {
+          "type": "string",
+          "default": ", ",
+          "description": "Joiner for multi-field values."
+        },
+        "maxLength": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Hard or practical character cap of the target input (e.g. 2000 for Discord messages). Omit when the target has no meaningful cap."
+        },
+        "overflowStrategy": {
+          "enum": ["error", "warn", "truncate"],
+          "default": "warn",
+          "description": "What the renderer does when output exceeds maxLength."
+        },
+        "collapseWhitespace": { "type": "boolean", "default": true },
+        "trim": { "type": "boolean", "default": true }
+      }
+    }
+  }
+}

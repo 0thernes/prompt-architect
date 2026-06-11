@@ -1,0 +1,23 @@
+# Dependencies (CI installs validator deps ad hoc; nothing is vendored)
+node_modules/
+package-lock.json
+
+# Build artifacts (the project is zero-build; nothing here should ever appear)
+dist/
+build/
+
+# Logs and local scratch
+*.log
+npm-debug.log*
+.tmp/
+
+# OS junk
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+*.swp
