@@ -19,7 +19,7 @@
     },
     "modality": {
       "enum": ["image", "video", "3d", "audio", "world"],
-      "description": "Primary output medium of the target generator. Drives UI grouping and filtering."
+      "description": "Primary output medium of the target generator. Drives UI grouping and filtering. Plugins that declare modality 'image', 'video', '3d', 'audio', or 'world' are structured plugins: they must supply fields[], promptTemplate, and outputRules. A 'freeform' plugin type (planned, not yet a valid enum value) will allow lightweight metadata plugins for the Glyph Canvas mode — no fields[], no promptTemplate required. Until that meta-schema minor lands, Glyph Canvas operates schema-free."
     },
     "version": {
       "type": "string",

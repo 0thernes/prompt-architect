@@ -37,13 +37,18 @@ A card moves to **Done** only when every item in its Definition of Done is check
 | T-016 | Plugin: Udio music generator | Backlog | P2 | S |
 | T-017 | Plugin: Meshy 3D model generator | Backlog | P3 | S |
 | T-018 | Plugin: Skybox AI world builder | Backlog | P3 | S |
+| T-019 | Glyph Canvas — Unicode/emoji/symbol palette UI (block browser, search, recents, insert-at-cursor) | Backlog | P2 | L |
+| T-020 | Glyph Canvas — named save / curate / history (localStorage, export plain text) | Backlog | P2 | M |
+| T-021 | Complexity-tier toggle (Simple/Advanced/Everything) + field `tier` hint in meta-schema | Backlog | P1 | M |
+| T-022 | Plugin pack: Runway Gen-4 + Pika 2 + Luma (video pack, installable as unit) | Backlog | P2 | M |
+| T-023 | Glyph Canvas — inline colour tagging + styled HTML export | Backlog | P3 | L |
 
 ---
 
 ## Column detail
 
 ### Backlog
-T-005, T-006, T-008, T-009, T-010, T-012, T-013, T-014, T-015, T-016, T-017, T-018
+T-005, T-006, T-008, T-009, T-010, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020, T-021, T-022, T-023
 
 ### Ready
 T-001 · T-002 · T-003 · T-004 · T-007 · T-011

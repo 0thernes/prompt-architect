@@ -31,19 +31,24 @@ Scope:
 ## Phase 1 — MVP (v0.2 – v0.5)
 
 **Goal:** daily-drivable tool for one real user (the founder), installable as a
-PWA, covering the generators actually in rotation.
+PWA, covering the generators actually in rotation — in both creative modes.
 
 Scope:
 
 - Plugin loader: fetch + parse `generators/*.yaml` at runtime (replaces the
   embedded PoC objects); meta-schema validation in the browser with friendly
   error surfaces for plugin authors
-- 8–10 curated plugins spanning modalities (target list: Midjourney, Stable
-  Diffusion, FLUX, DALL·E, Runway, Luma, Suno, Udio, Meshy, Skybox)
+- 8–10 curated plugins spanning all modalities (target list: Midjourney,
+  Stable Diffusion, FLUX, DALL·E, Runway, Luma, Suno, Udio, Meshy, Skybox)
+- Complexity-tier toggle (Simple / Advanced / Everything) surfaced per plugin;
+  field `tier` hint added to meta-schema as a minor extension
 - Preset save/load per generator (localStorage), prompt history with the
   plugin `id`+`version` recorded per entry
 - PWA: manifest + service worker, offline-first, installable
 - `lastVerified` staleness report in CI (warn > 90 days)
+- **Glyph Canvas baseline:** Unicode text area, searchable symbol/emoji palette
+  (Unicode block browser + recents), named glyph-prompt saves in localStorage,
+  copy-raw action
 
 **Acceptance criteria**
 
@@ -55,11 +60,15 @@ Scope:
    after first load.
 4. Presets survive a browser restart; history entries replay byte-identical
    prompts.
+5. The Glyph Canvas accepts and round-trips arbitrary Unicode (including
+   combining characters and emoji) without mangling; saved glyph prompts
+   persist across browser restarts.
 
 ## Phase 2 — v1 (community)
 
 **Goal:** the plugin corpus grows faster than one maintainer can write it,
-without ever executing third-party code.
+without ever executing third-party code; and the Glyph Canvas reaches full
+composition-tool maturity.
 
 Scope:
 
@@ -70,6 +79,14 @@ Scope:
 - Computed tokens and declarative cross-field `constraints[]` (meta-schema
   minor version, backwards compatible)
 - i18n of field labels (plugin-supplied translations)
+- **Per-modality plugin packs** — curated bundles (image pack, video pack,
+  audio pack) installable as a unit from the community registry
+- **Glyph Canvas v1:** inline colour tagging (`[text|#hex]` syntax) rendered
+  live; font-weight markers; export as plain text and as styled HTML fragment;
+  glyph-prompt output history with optional generator-output notes/thumbnails
+- `"freeform"` plugin type in the schema — lightweight metadata (useful
+  Unicode blocks, typical effective length, responsive model notes) for
+  Glyph Canvas, carrying no field structure
 
 **Acceptance criteria**
 
@@ -80,6 +97,8 @@ Scope:
    history exactly.
 4. Meta-schema version bump ships with a migration note and all first-party
    plugins still validating.
+5. A glyph-prompt composition with colour tags exports as a styled HTML
+   fragment that renders correctly in a modern browser.
 
 ## Non-goals (all phases)
 
@@ -87,3 +106,5 @@ Scope:
 - Accounts, telemetry, server-side anything
 - "Prompt quality" scoring or generation — Prompt Architect assembles, the
   human decides
+- Imposing schema structure on Glyph Canvas output — the entropy artist owns
+  the composition completely; validation would defeat the purpose

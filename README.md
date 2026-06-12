@@ -5,10 +5,14 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![status: PoC](https://img.shields.io/badge/status-PoC-orange.svg)](docs/ROADMAP.md)
 
-**A schema-driven, non-AI universal prompt builder.** One app that aggregates the
-options and settings of every major AI generator — image, video, 3D, worlds,
-music — so a user fills out a form and copies a perfect one-shot prompt for the
-chosen target. No app-hopping. No context exhaustion. No model calls.
+**A schema-driven, non-AI universal prompt builder** with two first-class
+creative modes. One app that aggregates the options and settings of every major
+AI generator — image, video, 3D, music/audio, worlds — so a power user fills
+out a form and copies a perfect one-shot prompt for the chosen target. And for
+the entropy artist: a freeform Glyph Canvas for composing 140,000+ Unicode
+glyphs, coloured text, and symbols as deliberate incoherence — pushing models
+into liminal latent space where uncanny outputs live. No app-hopping. No context
+exhaustion. No model calls.
 
 > **Status: PoC (v0.1.0)** — schema, two reference plugins, and a working
 > zero-build demo. Local only; not yet published.
@@ -31,10 +35,12 @@ burn time and attention:
 - **Trial-and-error cost** — every malformed prompt on a paid generator is real
   money and queue time wasted.
 
-## The solution
+## The solution — two creative modes
 
 Prompt Architect is deliberately **not** an AI product. It is a deterministic
-form-to-prompt compiler:
+form-to-prompt compiler — and an entropy canvas.
+
+### Structured mode (schema-driven)
 
 1. Every supported generator is described by a **plugin** — a pure data file
    (YAML) validated against a published meta-schema.
@@ -45,11 +51,29 @@ form-to-prompt compiler:
    for that exact target — correct flags, canonical parameter order, length
    limits enforced — ready to paste in one shot.
 
+A **complexity tier** (Simple / Advanced / Everything) keeps the form usable
+at every skill level: beginners see 3–5 essential controls; power users who
+opt into `Everything` get the full parameter surface. The tier system
+acknowledges an honest UX tension: most users bounce off a million options, so
+the full control surface is opt-in, not default.
+
 **The schema is the product.** Generators change weekly; code that hard-wires
 their options rots immediately. Here, vendor drift is absorbed by editing a
 YAML file — no code change, no release, no rebuild. The meta-schema
 ([`schemas/generator.schema.json`](schemas/generator.schema.json)) is the
 stable contract; everything above and below it is replaceable.
+
+### Glyph Canvas mode (entropy mode)
+
+A freeform composition surface with no schema, no fields, no template engine.
+The input is the full Unicode range — 140,000+ glyphs, symbols, emoji —
+composed with colour tagging and font-weight markers. The goal: deliberate
+incoherence that places the model in uncanny / liminal latent space, producing
+outputs that no structured prompt can reach. The human acts as curator and
+tastemaker, selecting from the uncanny output. This is 0thernes's documented
+avant-garde practice — entropy and chaos as the medium.
+
+Full description and tooling specification: [`docs/CREATIVE-MODES.md`](docs/CREATIVE-MODES.md).
 
 ## Architecture overview
 
@@ -59,7 +83,9 @@ schemas/generator.schema.json     the contract (JSON Schema 2020-12)
 generators/*.yaml                 data plugins: fields, ranges, enums,
         │ consumed by             dependsOn rules, promptTemplate, outputRules
 app/index.html                    zero-build vanilla-JS renderer:
-        │ produces                form ⇒ token substitution ⇒ post-processing
+        │                         [Structured mode] form ⇒ template engine ⇒ prompt
+        │                         [Glyph Canvas]    freeform Unicode canvas ⇒ prompt (verbatim)
+        │ produces
 "one-shot prompt"                 pasted into the target generator
 ```
 
@@ -70,14 +96,20 @@ app/index.html                    zero-build vanilla-JS renderer:
   (`scripts/validate.mjs`: token↔field integrity, canonical parameter order,
   defaults inside ranges), runtime form constraints.
 - **No build step** — the PoC is a single `index.html`; open it from disk.
+- **Glyph Canvas** — no schema, no validation, no template; a Unicode text
+  area with a symbol/emoji palette, colour tagging, and named saves.
 
 Full design rationale: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+Modality coverage and art-school taxonomy: [`docs/MODALITIES.md`](docs/MODALITIES.md).
+Creative modes in depth: [`docs/CREATIVE-MODES.md`](docs/CREATIVE-MODES.md).
 
 ## MVP scope
 
 In: plugin loader for `generators/*.yaml`, 8–10 curated plugins across image /
-video / audio modalities, preset save/load (localStorage), prompt history,
-PWA install, the CI plugin-validation pipeline as the contribution gate.
+video / audio / 3D / world modalities, preset save/load (localStorage), prompt
+history, PWA install, the CI plugin-validation pipeline as the contribution
+gate, complexity-tier toggle (Simple / Advanced / Everything), and the Glyph
+Canvas baseline (Unicode text area, emoji/symbol palette, named saves).
 
 Out (deliberately): any model API calls, accounts/backend, prompt "quality
 scoring", browser extensions.
@@ -136,6 +168,8 @@ Current work state, WIP limits, and all backlog cards live in
 | [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md) | Structured log schema, event catalogue, `app/logger.js` |
 | [`docs/SECURITY-NOTES.md`](docs/SECURITY-NOTES.md) | Defensive security posture — assets, trust model, mitigations |
 | [`docs/FAQ.md`](docs/FAQ.md) | Common questions answered honestly |
+| [`docs/MODALITIES.md`](docs/MODALITIES.md) | All-modality coverage map, tool lists, art-school taxonomy, complexity tiers |
+| [`docs/CREATIVE-MODES.md`](docs/CREATIVE-MODES.md) | Structured vs Glyph-Canvas mode; entropy practice; Unicode/colour tooling spec |
 
 ## License
 
