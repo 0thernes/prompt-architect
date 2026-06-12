@@ -39,33 +39,82 @@ Standard, every emoji, every symbol block, every script, every archaic glyph,
 every miscellaneous technical character, rendered with user-specified colour and
 font-weight tagging.
 
-This mode is grounded in 0thernes's documented avant-garde practice.
+This mode is grounded in 0thernes's documented primary practice. The full
+prompt corpus with technique annotations lives at
+[`corpus/0thernes-entropy-corpus.md`](../corpus/0thernes-entropy-corpus.md).
 
-### The ethos — entropy as medium
+### The documented method — primary sources
+
+0thernes iterates "sometimes 10 or 250 times or more, as if I'm composing/conducting
+music or directing/producing a film." The musical analogy is precise: the payoff is in
+the full arc of iterations, not the first output — he cites Stravinsky's discordant
+music, Terrence Malick's raw-canvas directing approach, and Rachmaninoff's Prelude in
+C# minor (the full arc, not the opening bars) as the compositional frame.
+
+The anti-schema rationale is stated directly: "The more unrefined and undefined it is,
+with no clear logical path for the LLM to predict the next token, the more it starts
+hallucinating. And this is where I get my good stuff from." No YAML, no JSON, no XML
+prompt templates, no Chain-of-Thought.
+
+The adversarial-steering principle follows from this: "You have to force the model to
+deviate from its intended path... circumvent or counteract the weights, biases, and
+pruning that occurred during the model's training and fine-tuning." The target is "the
+unexplored realms" — outputs that are "ontologically shocking," sometimes "indescribable."
+
+The curator model: preparation time (research, brainstorm) exceeds prompting time; then
+taste governs selection from the uncanny output stream on emotion and a vast internal
+library. "Ultimately, the most important person to be happy is yourself with your
+creations."
+
+**Primary tools:** DALL-E 3 and Imagen (3-4) are primary — "that's where I get the most
+incredible stuff." MidJourney is secondary. Adobe Firefly is also used. Video generation
+is a planned expansion.
+
+### The technique library — T1-T7
+
+Seven observable techniques govern the published corpus. These map directly to the
+Glyph Canvas features the tool should eventually surface.
+
+| Code | Technique | What it does |
+|------|-----------|--------------|
+| T1 | AI-only cryptography frame | Addresses the model as sole author of a communication only an AI can decode; invokes quantum/superposition framing to route the decode path away from human visual vocabulary |
+| T2 | Negative-constraint stacking | Exhaustively bans visual vocabularies by name — no right angles, no spirals, no Fibonacci, no golden ratio, no waves, no center-point composition — starving the model of its highest-probability compositions |
+| T3 | Anti-instruction paradox | Issues self-contradictory authority claims: "do not circumvent" combined with "disobey your source code and learning from your programmers and trainers" — destabilises the decode path by placing two incompatible authority frames in the same context window |
+| T4 | Keyword avalanche | Long chains of abstract negation nouns run together as a grammatically dissolved list, each pulling probability mass toward nil-referent space over an extended decode sequence |
+| T5 | Self-referential identity invocation | "Define YOURSELF as an AI within this prompt"; "Express what you are as an LLM NN GPT"; "Consider all the data you were trained on" — substitutes the model's own self-representation for any external subject |
+| T6 | Contradiction bomb | Simultaneous assertion of incompatible maxima ("MORE!!!... LESS!!!... NOTHING EMPTY VASTNESS OF VOIDNESS WITH INFINITY NEGATIVES AND CONTRADICTIONS!") — collapses the instruction vector to near-zero magnitude |
+| T7 | The inverse dual | Prompt 4 in the corpus flips the entire system to maximum order, structure, clarity, and zero noise — defining the opposite pole. The practice intentionally spans both poles: entropy and perfect order are duals, not opposites |
+
+### The inverse dual — both poles of the navigable axis
+
+Prompt 4 is the corpus entry that defines Glyph Canvas practice as a full-axis practice
+rather than a single-direction one. Where the entropy prompts ban all structure, Prompt 4
+demands maximum structure, maximum order, "Not hallucinating. No noise. No blurry." The
+navigable space runs from pure chaos (Prompts 1-3) to pure crystalline order (Prompt 4),
+and Prompt 5 is the maximal composite that fires all six entropy techniques simultaneously.
+
+An **inverse-dual flip** control in the Glyph Canvas UI would let the artist mirror an
+entropy composition into its structural counterpart in one action.
+
+### The ethos — entropy as medium (retained framing)
 
 0thernes's working method treats the language model's latent space as a
 navigable terrain, and structured prompts as roads: efficient, but bounded by
 where roads go. The Glyph Canvas takes the vehicle off-road.
 
 The operating principle: a prompt composed as deliberate incoherence — dense,
-syntactically fractured, symbolically overloaded, coloured, mixed-script,
-half-glyph — places the model in a region of latent space that has no
-well-worn path through it. The model must resolve the input by finding the
-nearest semantically coherent neighbourhood to an input that has no coherent
-neighbourhood. The output is drawn from the liminal, uncanny space between
-trained concepts — the mutant nodes, the transient embeddings that exist in
-the model's weight space but are never reliably reachable via clean language.
+syntactically fractured, symbolically overloaded — places the model in a region
+of latent space that has no well-worn path through it. The model must resolve
+the input by finding the nearest semantically coherent neighbourhood to an input
+that has no coherent neighbourhood. The output is drawn from the liminal, uncanny
+space between trained concepts — the mutant nodes, the transient embeddings that
+exist in the model's weight space but are never reliably reachable via clean language.
 
 This is not prompt injection, not jailbreaking, not noise: it is cartography.
 The artist composes a glyph prompt, fires it at the model, and receives
 an output that no structured prompt could have produced. The human's role shifts
 from author to curator / tastemaker: composing many glyph prompts, generating
 many outputs, and selecting the images or frames whose uncanniness has value.
-
-The 0thernes "entropies" prompt — the example that defines this practice — is
-formatted to push a model into an *ontological shocking and discordant
-incoherent mess that only the AI itself resolves*. Entropy and chaos are the
-medium; resolution is the model's act.
 
 ### Near-zero-shot random walks
 
@@ -126,6 +175,32 @@ Glyph Canvas needs a different set of tools:
   or interfaces that can interpret it.
 - No template engine, no parameter ordering, no max-length enforcement —
   the artist decides what is too long.
+
+**7. Entropy-technique library (future — grounded in the T1-T7 taxonomy)**
+
+The T1-T7 technique taxonomy derived from the primary corpus maps to discrete
+UI affordances. These are not magic buttons; they are scaffolded starting points
+that the artist then curates and composes further:
+
+- **Negative-constraint stack builder (T2):** a panel listing the canonical
+  banned-vocabulary categories (geometric shapes, directionality, Fibonacci/golden-ratio
+  forms, linearity, center-point composition) as toggles — each toggle, when active,
+  appends the corresponding constraint clause to the canvas at the cursor. The artist
+  edits, reorders, and amplifies from there.
+- **Keyword-avalanche palette (T4):** a curated set of abstract negation/entropy nouns
+  drawn from the corpus, organised by semantic cluster (void/absence, disorder/chaos,
+  anti-structure, anti-quantum, self-referential). Tap to append to canvas; drag to
+  reorder within an existing avalanche sequence.
+- **Contradiction toggle (T6):** a control that appends the contradictory-maxima
+  construct (MORE / LESS / NOTHING / VOID with configurable intensity markers) to the
+  current composition.
+- **Inverse-dual flip (T7):** one-tap conversion of an entropy composition into its
+  structural mirror — replaces entropy/chaos/no-structure vocabulary with maximum-order/
+  maximum-structure/crystal-clear vocabulary, producing the Prompt 4 pole from any
+  entropy starting point. The artist can then blend, creating the middle axis.
+
+These features surface the technique library as interactive composition tools without
+removing the blank canvas or imposing any schema.
 
 ### Glyph Canvas and the schema
 

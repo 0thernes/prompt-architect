@@ -42,13 +42,16 @@ A card moves to **Done** only when every item in its Definition of Done is check
 | T-021 | Complexity-tier toggle (Simple/Advanced/Everything) + field `tier` hint in meta-schema | Backlog | P1 | M |
 | T-022 | Plugin pack: Runway Gen-4 + Pika 2 + Luma (video pack, installable as unit) | Backlog | P2 | M |
 | T-023 | Glyph Canvas — inline colour tagging + styled HTML export | Backlog | P3 | L |
+| T-024 | Glyph Canvas — entropy-technique library UI (T1-T7): negative-constraint stack builder, keyword-avalanche palette, contradiction toggle, inverse-dual flip | Backlog | P2 | L |
+| T-025 | Glyph Canvas — corpus import / save / export (paste or file import; save with technique tags; export full corpus as JSON or Markdown) | Backlog | P2 | M |
+| T-026 | Glyph Canvas — inverse-dual mode toggle (persistent entropy/order axis toggle; one-tap composition mirror across T7 pole) | Backlog | P3 | M |
 
 ---
 
 ## Column detail
 
 ### Backlog
-T-005, T-006, T-008, T-009, T-010, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020, T-021, T-022, T-023
+T-005, T-006, T-008, T-009, T-010, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020, T-021, T-022, T-023, T-024, T-025, T-026
 
 ### Ready
 T-001 · T-002 · T-003 · T-004 · T-007 · T-011

@@ -75,6 +75,15 @@ avant-garde practice — entropy and chaos as the medium.
 
 Full description and tooling specification: [`docs/CREATIVE-MODES.md`](docs/CREATIVE-MODES.md).
 
+The Glyph Canvas mode is now grounded in 0thernes's five published prompts and a seven-technique
+taxonomy (T1-T7) derived from direct analysis of the corpus. The techniques — AI-only
+cryptography frame, negative-constraint stacking, anti-instruction paradox, keyword avalanche,
+self-referential identity invocation, contradiction bomb, and the inverse dual — map directly to
+planned UI affordances: a negative-constraint stack builder, a keyword-avalanche palette, a
+contradiction toggle, and an inverse-dual flip that mirrors any entropy composition to its
+maximum-order pole. The full annotated corpus lives at
+[`corpus/0thernes-entropy-corpus.md`](corpus/0thernes-entropy-corpus.md).
+
 ## Architecture overview
 
 ```

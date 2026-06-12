@@ -87,6 +87,16 @@ Scope:
 - `"freeform"` plugin type in the schema — lightweight metadata (useful
   Unicode blocks, typical effective length, responsive model notes) for
   Glyph Canvas, carrying no field structure
+- **Entropy-technique library UI (T1-T7):** negative-constraint stack builder,
+  keyword-avalanche palette, contradiction toggle, and inverse-dual flip —
+  UI affordances derived from the 0thernes primary corpus (see
+  `corpus/0thernes-entropy-corpus.md`); grounded in the T1-T7 taxonomy
+- **Corpus import / save:** import a plain-text prompt file or paste a raw
+  prompt and save it to the Glyph Canvas corpus with technique tags; export
+  the full corpus as a JSON or Markdown file for archiving and sharing
+- **Inverse-dual mode toggle:** a persistent UI toggle that keeps the canvas
+  in entropy mode (T1-T6 scaffolding active) or structural/order mode (T7 pole
+  active), with a one-tap flip to mirror the current composition across the axis
 
 **Acceptance criteria**
 

@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-06-12
+
+### Added
+
+- `corpus/0thernes-entropy-corpus.md` — the five 0thernes entropy prompts reproduced
+  verbatim with the Creative Commons attribution block, each followed by a technique
+  annotation mapping it to the T1-T7 taxonomy. Includes the full taxonomy as a reference
+  table. Prompt 4 is noted as the inverse dual (the practice spans both entropy and perfect
+  order). Prompt 5 is annotated as the maximal composite (all six entropy techniques
+  simultaneously active).
+
+### Changed
+
+- `docs/CREATIVE-MODES.md` — Glyph Canvas section rebuilt from primary sources:
+  replaced speculative framing with 0thernes's documented method (10-250 iterations as
+  composition; Stravinsky/Malick framing; anti-schema rationale in quoted words; adversarial-
+  steering principle; curator model; primary tools DALL-E 3, Imagen 3-4, MidJourney secondary,
+  Firefly). Added T1-T7 technique library as a reference table. Added "inverse dual" section
+  documenting the both-poles practice. Added item 7 to the tooling spec describing four
+  technique-library UI affordances (negative-constraint stack builder, keyword-avalanche
+  palette, contradiction toggle, inverse-dual flip) grounded in the taxonomy. Corpus link added.
+- `docs/ROADMAP.md` — Phase 2 (v1) scope extended with three new items: entropy-technique
+  library UI (T1-T7), corpus import/save, and inverse-dual mode toggle.
+- `docs/KANBAN.md` — three new backlog cards: T-024 (entropy-technique library UI),
+  T-025 (corpus import/save/export), T-026 (inverse-dual mode toggle).
+- `README.md` — added one paragraph linking the corpus and summarising the T1-T7 technique
+  taxonomy and the four planned UI affordances.
+
 ## [0.1.1] - 2026-06-11
 
 ### Added
