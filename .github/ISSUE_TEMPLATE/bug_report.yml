@@ -1,0 +1,70 @@
+name: Bug report
+description: >-
+  Report a validator rejection, a wrong assembled prompt, a broken UI behaviour,
+  or a CI failure that is not a real plugin error.
+labels: [bug]
+assignees: [0thernes]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing: run `node scripts/validate.mjs` locally and check the
+        browser console for any JS errors. Include both in the report.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Plugin validator (scripts/validate.mjs)
+        - Meta-schema (schemas/generator.schema.json)
+        - App renderer / form (app/index.html)
+        - Template engine / assembled prompt
+        - CI workflow
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: plugin
+    attributes:
+      label: Generator plugin (if applicable)
+      description: Which generator YAML is involved? Leave blank if not plugin-related.
+      placeholder: "e.g. midjourney.yaml"
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: >-
+        Describe the bug. For prompt bugs: paste the form state (field values)
+        and the incorrect output. For validator bugs: paste the error message.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      description: What should have happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open app/index.html in Chrome
+        2. Select "Midjourney"
+        3. Set Aspect Ratio to 16:9
+        4. Leave all other fields at defaults
+        5. Observe assembled prompt — the --ar flag is missing
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser / Node version
+      placeholder: "e.g. Chrome 125 / Node 20.14"

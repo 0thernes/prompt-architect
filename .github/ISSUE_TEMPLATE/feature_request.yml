@@ -1,0 +1,60 @@
+name: Feature request
+description: >-
+  Propose a new generator plugin, a meta-schema extension, a UI capability, or
+  a validator improvement.
+labels: [enhancement]
+assignees: [0thernes]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The project's non-goals are: API calls at runtime, accounts, server-side
+        anything, and AI-driven prompt scoring. Proposals in those areas will be
+        closed. Everything else is welcome.
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Request type
+      options:
+        - New generator plugin
+        - Update existing plugin (new flags / changed ranges)
+        - Meta-schema extension (new field type, new outputRules capability)
+        - App UI / UX improvement
+        - Validator improvement
+        - CI / developer tooling
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem this solves
+      description: >-
+        What frustration or gap does this address? For plugin requests: which
+        generator, what version, and what flags are missing or wrong?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: >-
+        How should this work? For plugin additions: link the vendor parameter
+        docs. For schema extensions: sketch the YAML structure you have in mind.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What else did you consider, and why does this approach win?
+
+  - type: input
+    id: docs
+    attributes:
+      label: Vendor documentation link (for plugin requests)
+      placeholder: "https://docs.midjourney.com/docs/parameter-list"

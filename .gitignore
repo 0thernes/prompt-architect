@@ -8,6 +8,7 @@ build/
 
 # Logs and local scratch
 *.log
+logs/*.log
 npm-debug.log*
 .tmp/
 

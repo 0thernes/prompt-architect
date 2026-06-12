@@ -1,0 +1,10 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: mailto:0_0@0thernes.art?subject=SECURITY%3A%20Prompt%20Architect
+    about: >-
+      Please report security issues privately by email, not as a public issue.
+      See SECURITY.md for the full policy.
+  - name: General discussion / questions
+    url: https://github.com/0thernes/prompt-architect/discussions
+    about: Questions and open-ended discussion that do not fit a bug or feature form.

@@ -1,0 +1,71 @@
+name: Task / backlog card
+description: >-
+  Create or track a backlog task — plugin authoring, roadmap work, refactor,
+  or any scoped unit of planned work. Use for items in docs/backlog/.
+labels: [task]
+assignees: [0thernes]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Link this to a card in `docs/backlog/` when one exists (or create the
+        card in your PR). See `docs/KANBAN.md` for WIP limits before marking
+        something "In Progress".
+
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Roadmap phase
+      options:
+        - "Phase 0 — PoC (current)"
+        - "Phase 1 — MVP"
+        - "Phase 2 — v1 (community)"
+        - "Cross-cutting / maintenance"
+    validations:
+      required: true
+
+  - type: input
+    id: card_id
+    attributes:
+      label: Backlog card ID
+      placeholder: "T-005"
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context and goal
+      description: >-
+        What is this task? Why does it matter to the roadmap? Be specific
+        enough that someone else could pick it up.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: >-
+        List the conditions that make this task done. Align with the
+        Definition of Done in the relevant backlog card.
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: estimate
+    attributes:
+      label: Estimate
+      options:
+        - XS (< 1 hour)
+        - S (half-day)
+        - M (1 day)
+        - L (2-3 days)
+        - XL (> 3 days — should be split)
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Cards or external work that must complete before this can start.

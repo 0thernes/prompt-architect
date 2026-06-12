@@ -5,6 +5,11 @@ on:
     branches: [main]
   pull_request:
 
+# Cancel any in-flight run for the same branch/PR when a newer commit arrives.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 

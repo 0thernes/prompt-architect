@@ -1,5 +1,10 @@
 # Prompt Architect
 
+[![CI](https://github.com/0thernes/prompt-architect/actions/workflows/ci.yml/badge.svg)](https://github.com/0thernes/prompt-architect/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/0thernes/prompt-architect/actions/workflows/codeql.yml/badge.svg)](https://github.com/0thernes/prompt-architect/actions/workflows/codeql.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![status: PoC](https://img.shields.io/badge/status-PoC-orange.svg)](docs/ROADMAP.md)
+
 **A schema-driven, non-AI universal prompt builder.** One app that aggregates the
 options and settings of every major AI generator — image, video, 3D, worlds,
 music — so a user fills out a form and copies a perfect one-shot prompt for the
@@ -116,6 +121,21 @@ To validate plugins locally:
 npm install --no-save ajv@8 ajv-formats@3 js-yaml@4
 node scripts/validate.mjs
 ```
+
+## Project board
+
+Current work state, WIP limits, and all backlog cards live in
+[`docs/KANBAN.md`](docs/KANBAN.md).
+
+## Quality and audit
+
+| Document | What it covers |
+|----------|----------------|
+| [`docs/AUDIT.md`](docs/AUDIT.md) | Self-audit checklist (correctness, security, plugin trust, accessibility) |
+| [`docs/TESTING.md`](docs/TESTING.md) | Test strategy, pyramid, coverage targets, how to run |
+| [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md) | Structured log schema, event catalogue, `app/logger.js` |
+| [`docs/SECURITY-NOTES.md`](docs/SECURITY-NOTES.md) | Defensive security posture — assets, trust model, mitigations |
+| [`docs/FAQ.md`](docs/FAQ.md) | Common questions answered honestly |
 
 ## License
 

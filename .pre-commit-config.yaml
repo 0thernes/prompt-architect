@@ -1,0 +1,44 @@
+# pre-commit hooks for Prompt Architect.
+# Install: pip install pre-commit && pre-commit install
+# Run manually against all files: pre-commit run --all-files
+#
+# Stack note: the project is vanilla JS + JSON Schema + YAML plugins (no Python
+# source, no build step). Hooks are therefore focused on the actual file types
+# present: JS/JSON/YAML/Markdown plus universal hygiene.
+
+repos:
+  # ── Universal hygiene (language-agnostic) ──────────────────────────────────
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: check-yaml
+        # Validate all YAML including generator plugins.
+        # The meta-schema reference ($schema) is a comment, not YAML; safe.
+        args: [--allow-multiple-documents]
+      - id: check-json
+        # Catches malformed JSON Schema files.
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-added-large-files
+        args: [--maxkb=500]
+      - id: check-case-conflict
+
+  # ── Prettier — JS / JSON / YAML / Markdown ────────────────────────────────
+  # Prettier is the single formatter for every text-based file type in this
+  # repo. Configuration lives in .prettierrc.json (or inline below via
+  # --print-width etc. if no config file is present).
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        name: Prettier (JS, JSON, YAML, Markdown)
+        types_or: [javascript, json, yaml, markdown]
+        args:
+          - --print-width=100
+          - --single-quote
+          - --trailing-comma=es5
+          - --prose-wrap=preserve
