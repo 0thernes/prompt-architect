@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-06-12
+
+### Added
+
+- `app/engine.js` — extracted ESM prompt-assembly engine (browser + Node compatible,
+  zero dependencies). Exports `assemble(plugin, values)`, `isVisible`, `isSet`,
+  `formatValue`. Implements in a single linear pass: token substitution
+  (`{{key}}`), conditional section blocks (`{{#key}}…{{/key}}`), `omitIfDefault`
+  gating, `dependsOn` field visibility, canonical flag ordering via
+  `outputRules.parameterOrder`, `collapseWhitespace`/`trim` post-processing,
+  `maxLength` + `overflowStrategy` (warn / truncate / error).
+- `app/engine.js` — `computedTokens` support: `{{=id}}` scalar and
+  `{{#=id}}…{{/=id}}` conditional section syntax for declarative flag-rename
+  rules (e.g. Midjourney `--niji` vs `--v`).
+- `tests/engine.test.mjs` — 37 unit tests using `node:test` + `node:assert`
+  (zero extra dependencies). Covers all eight areas: token substitution,
+  section blocks, `omitIfDefault` (MJ minimal-string assertion), `dependsOn`
+  gating (SD `hires_upscaler` / MJ `model_version` mutual exclusion),
+  parameter ordering, `maxLength` + overflow strategies, computed-token
+  `--niji` flag rename, and `isVisible`/`isSet` export edge cases.
+- `schemas/generator.schema.json` — `computedTokens` array property (optional)
+  with `computedToken` `$def`: `id`, `emit`, `description`, `when[]` (reuses
+  existing `condition` `$def`). Schema remains JSON Schema draft 2020-12 valid.
+- `generators/midjourney.yaml` — `niji_version` enum field (Off / Niji 6 /
+  Niji 5) with `omitIfDefault: true`; `model_version` gains
+  `dependsOn: [{field: niji_version, operator: equals, value: "none"}]` so
+  it is suppressed when Niji is active; one `computedToken` (`niji_flag`,
+  emit `--niji`) wires the mutual-exclusion into the template. Plugin version
+  bumped to 1.1.0, `lastVerified` updated to 2026-06-12.
+
+### Changed
+
+- `app/index.html` — `<script>` converted to `<script type="module">`;
+  imports `assemble`, `isVisible`, `isSet` from `./engine.js`. Removed the
+  ~40 lines of duplicated engine logic (`renderPrompt`, `isVisible`, `isSet`,
+  `formatValue`). The app continues to run from `file://` with no bundler.
+  Midjourney GENERATORS entry updated to include `niji_version`, `model_version`
+  `dependsOn`, and `computedTokens` to match `generators/midjourney.yaml`.
+- `scripts/validate.mjs` — extended semantic checks: validates
+  `computedTokens` uniqueness, id/field-key collision, `when` condition field
+  references; validates `{{=id}}` / `{{#=id}}` / `{{/=id}}` template references
+  against declared computed-token ids; validates balanced computed-token sections.
+- `.github/workflows/ci.yml` — added `node --test tests/engine.test.mjs` step
+  before the plugin-validate step (same job, same permissions/concurrency).
+
 ## [0.1.2] - 2026-06-12
 
 ### Added

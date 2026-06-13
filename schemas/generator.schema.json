@@ -51,7 +51,13 @@
       "minLength": 1,
       "description": "Assembly template using token substitution. Syntax: '{{key}}' substitutes a field's formatted value ('' when unset). '{{#key}}...{{/key}}' is a conditional section emitted only when the field is set (non-empty, visible per dependsOn, and — when omitIfDefault is true — different from its default). Sections may contain tokens but do not nest. Example: '{{subject}} --ar {{aspect_ratio}}{{#seed}} --seed {{seed}}{{/seed}}'."
     },
-    "outputRules": { "$ref": "#/$defs/outputRules" }
+    "outputRules": { "$ref": "#/$defs/outputRules" },
+    "computedTokens": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/computedToken" },
+      "description": "Declarative computed-flag rules. Each entry defines a virtual token (referenced as {{=id}} or {{#=id}}…{{/=id}} in the template) whose emitted string is chosen when a set of conditions holds. Use for generator-specific flag renames that plain token substitution cannot express — the canonical example is Midjourney's --niji flag, which is a separate parameter rather than a --v value and so cannot be expressed as a field option."
+    }
   },
   "$defs": {
     "field": {
@@ -160,6 +166,34 @@
           "then": { "required": ["value"] }
         }
       ]
+    },
+    "computedToken": {
+      "type": "object",
+      "required": ["id", "emit"],
+      "additionalProperties": false,
+      "description": "A virtual token whose emitted string is activated by a set of conditions. Referenced in promptTemplate as {{=id}} (scalar) or {{#=id}}…{{/=id}} (section). When no 'when' conditions are supplied the token is always active.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "description": "Token identifier. Used in the template as {{=id}}. Must be unique within computedTokens; must not collide with a field key."
+        },
+        "emit": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The literal string emitted when all 'when' conditions hold. Example: '--niji 6'."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable note explaining what this computed token does and why it is needed."
+        },
+        "when": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/condition" },
+          "description": "All conditions must hold for this token to be active. When absent or empty the token is unconditionally active."
+        }
+      }
     },
     "outputRules": {
       "type": "object",

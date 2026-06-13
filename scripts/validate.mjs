@@ -43,7 +43,23 @@ function semanticChecks(file, plugin) {
   if (keySet.size !== keys.length)
     fail(file, `duplicate field keys: ${keys.filter((k, i) => keys.indexOf(k) !== i).join(", ")}`);
 
+  // --- computed tokens ---
+  const computedTokens = plugin.computedTokens || [];
+  const ctIds = computedTokens.map((ct) => ct.id);
+  const ctIdSet = new Set(ctIds);
+  if (ctIdSet.size !== ctIds.length)
+    fail(file, `duplicate computedToken ids: ${ctIds.filter((k, i) => ctIds.indexOf(k) !== i).join(", ")}`);
+  for (const ct of computedTokens) {
+    if (keySet.has(ct.id))
+      fail(file, `computedToken id '${ct.id}' collides with a field key`);
+    for (const c of ct.when || []) {
+      if (!keySet.has(c.field))
+        fail(file, `computedToken '${ct.id}' when-condition references unknown field '${c.field}'`);
+    }
+  }
+
   // --- template tokens ---
+  // Regular field tokens: {{key}} / {{#key}} / {{/key}}
   const tokenRe = /\{\{([#/]?)([a-z][a-z0-9_]*)\}\}/g;
   const firstSeen = [];
   for (const m of plugin.promptTemplate.matchAll(tokenRe)) {
@@ -51,11 +67,23 @@ function semanticChecks(file, plugin) {
     if (!keySet.has(key)) fail(file, `template token '{{${prefix}${key}}}' has no matching field`);
     if (prefix !== "/" && !firstSeen.includes(key)) firstSeen.push(key);
   }
-  // unbalanced sections: every {{#k}} needs a {{/k}} and vice versa
+  // Computed-token references: {{=id}} / {{#=id}} / {{/=id}}
+  const ctTokenRe = /\{\{([#/]?)=([a-z][a-z0-9_]*)\}\}/g;
+  for (const m of plugin.promptTemplate.matchAll(ctTokenRe)) {
+    const [, prefix, id] = m;
+    if (!ctIdSet.has(id))
+      fail(file, `template computed-token reference '{{${prefix}=${id}}}' has no matching computedToken`);
+  }
+  // unbalanced regular sections: every {{#k}} needs a {{/k}} and vice versa
   const opens = [...plugin.promptTemplate.matchAll(/\{\{#([a-z0-9_]+)\}\}/g)].map((m) => m[1]);
   const closes = [...plugin.promptTemplate.matchAll(/\{\{\/([a-z0-9_]+)\}\}/g)].map((m) => m[1]);
   for (const k of opens) if (!closes.includes(k)) fail(file, `section '{{#${k}}}' is never closed`);
   for (const k of closes) if (!opens.includes(k)) fail(file, `'{{/${k}}}' closes a section that was never opened`);
+  // unbalanced computed-token sections: every {{#=id}} needs a {{/=id}}
+  const ctOpens = [...plugin.promptTemplate.matchAll(/\{\{#=([a-z0-9_]+)\}\}/g)].map((m) => m[1]);
+  const ctCloses = [...plugin.promptTemplate.matchAll(/\{\{\/=([a-z0-9_]+)\}\}/g)].map((m) => m[1]);
+  for (const k of ctOpens) if (!ctCloses.includes(k)) fail(file, `computed-token section '{{#=${k}}}' is never closed`);
+  for (const k of ctCloses) if (!ctOpens.includes(k)) fail(file, `'{{/=${k}}}' closes a computed-token section that was never opened`);
 
   // --- parameterOrder is the single source of truth for ordering ---
   const order = plugin.outputRules.parameterOrder;

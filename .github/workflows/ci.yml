@@ -28,10 +28,15 @@ jobs:
 
       # The repo is deliberately dependency-free (no package.json committed);
       # validator deps are installed ad hoc so the app itself stays zero-build.
+      # The repo is deliberately dependency-free (no package.json committed);
+      # validator deps are installed ad hoc so the app itself stays zero-build.
       - name: Install validator dependencies
         run: |
           npm init -y > /dev/null
           npm install --no-save --no-audit --no-fund ajv@8 ajv-formats@3 js-yaml@4
+
+      - name: Run engine unit tests (node:test, zero extra deps)
+        run: node --test tests/engine.test.mjs
 
       - name: Validate generator plugins against meta-schema
         run: node scripts/validate.mjs

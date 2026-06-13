@@ -20,7 +20,9 @@ A card moves to **Done** only when every item in its Definition of Done is check
 | ID | Title | Column | Priority | Estimate |
 |----|-------|--------|----------|----------|
 | T-001 | Runtime plugin loader (fetch + parse YAML) | Ready | P1 | M |
-| T-002 | Computed tokens — `emit` map for flag-rename cases (e.g. --niji) | Ready | P1 | M |
+| T-002 | Computed tokens — `emit` map for flag-rename cases (e.g. --niji) | Done | P1 | M |
+| T-027 | Extract template engine to `app/engine.js` (ESM, browser + Node) | Done | P1 | M |
+| T-028 | Unit-test suite `tests/engine.test.mjs` (node:test, 37 cases) | Done | P1 | S |
 | T-003 | Plugin: Runway Gen-3 video generator | Ready | P2 | S |
 | T-004 | Plugin: Suno v4 audio/music generator | Ready | P2 | S |
 | T-005 | Plugin: Luma Dream Machine video | Backlog | P2 | S |
@@ -54,7 +56,7 @@ A card moves to **Done** only when every item in its Definition of Done is check
 T-005, T-006, T-008, T-009, T-010, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020, T-021, T-022, T-023, T-024, T-025, T-026
 
 ### Ready
-T-001 · T-002 · T-003 · T-004 · T-007 · T-011
+T-001 · T-003 · T-004 · T-007 · T-011
 
 ### In Progress
 _(empty)_
@@ -63,4 +65,4 @@ _(empty)_
 _(empty)_
 
 ### Done
-_(empty — all complete work is tracked in CHANGELOG.md)_
+T-002 · T-027 · T-028 — see CHANGELOG.md [0.1.3] for details._

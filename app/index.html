@@ -80,15 +80,20 @@
     <p id="meta"></p>
   </section>
 </main>
-<script>
-"use strict";
+<script type="module">
 /* PoC NOTE: in the MVP, plugins load from ../generators/*.yaml and are
  * validated against ../schemas/generator.schema.json. For this zero-build PoC
  * they are embedded as JS objects (verbatim mirrors of the YAML files) so the
- * page runs from file:// with no fetch/CORS and no YAML parser dependency. */
+ * page runs from file:// with no fetch/CORS and no YAML parser dependency.
+ *
+ * The template engine lives in ./engine.js (imported below). The form renderer
+ * and DOM wiring remain here; engine.js is browser + Node compatible ESM with
+ * zero dependencies. */
+import { assemble, isVisible, isSet, formatValue } from "./engine.js";
+
 const GENERATORS = [
 {
-  id: "midjourney", name: "Midjourney", modality: "image", version: "1.0.0",
+  id: "midjourney", name: "Midjourney", modality: "image", version: "1.1.0",
   fields: [
     { key: "subject", label: "Subject / scene", type: "string", required: true, multiline: true,
       placeholder: "a lighthouse keeper reading by candlelight, oil painting, dramatic chiaroscuro",
@@ -99,9 +104,19 @@ const GENERATORS = [
       placeholder: "text, watermark, frame", description: "Comma-separated concepts to suppress." },
     { key: "aspect_ratio", label: "Aspect ratio (--ar)", type: "enum", default: "1:1",
       options: ["1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3", "21:9"] },
+    { key: "niji_version", label: "Niji anime model (--niji)", type: "enum", default: "none",
+      omitIfDefault: true,
+      options: [
+        { value: "none", label: "Off — use standard --v model" },
+        { value: "6",    label: "Niji 6 (current)" },
+        { value: "5",    label: "Niji 5" }
+      ],
+      description: "Selects the Niji anime model. When set, --niji replaces --v (computed-token rename)." },
     { key: "model_version", label: "Model version (--v)", type: "enum", default: "7",
       options: [ { value: "7", label: "v7 (current)" }, { value: "6.1", label: "v6.1" },
-                 { value: "6", label: "v6" }, { value: "5.2", label: "v5.2 (legacy)" } ] },
+                 { value: "6", label: "v6" }, { value: "5.2", label: "v5.2 (legacy)" } ],
+      dependsOn: [{ field: "niji_version", operator: "equals", value: "none" }],
+      description: "Standard model. Hidden when Niji anime model is selected." },
     { key: "stylize", label: "Stylize (--stylize)", type: "number", default: 100, omitIfDefault: true,
       range: { min: 0, max: 1000, step: 10 }, description: "100 is Midjourney's default; flag omitted at 100." },
     { key: "chaos", label: "Chaos (--chaos)", type: "number", default: 0, omitIfDefault: true,
@@ -111,9 +126,22 @@ const GENERATORS = [
     { key: "seed", label: "Seed (--seed)", type: "number", range: { min: 0, max: 4294967295, step: 1 },
       placeholder: "blank = random", description: "Blank lets Midjourney pick a random seed." }
   ],
-  promptTemplate: "{{subject}}{{#style_refs}} --sref {{style_refs}}{{/style_refs}}{{#negative}} --no {{negative}}{{/negative}} --ar {{aspect_ratio}} --v {{model_version}}{{#stylize}} --stylize {{stylize}}{{/stylize}}{{#chaos}} --chaos {{chaos}}{{/chaos}}{{#weird}} --weird {{weird}}{{/weird}}{{#seed}} --seed {{seed}}{{/seed}}",
+  computedTokens: [
+    { id: "niji_flag", emit: "--niji", description: "Active when niji_version is not 'none'.",
+      when: [{ field: "niji_version", operator: "notEquals", value: "none" }] }
+  ],
+  promptTemplate:
+    "{{subject}}{{#style_refs}} --sref {{style_refs}}{{/style_refs}}" +
+    "{{#negative}} --no {{negative}}{{/negative}}" +
+    " --ar {{aspect_ratio}}" +
+    "{{#=niji_flag}} {{=niji_flag}} {{niji_version}}{{/=niji_flag}}" +
+    "{{#model_version}} --v {{model_version}}{{/model_version}}" +
+    "{{#stylize}} --stylize {{stylize}}{{/stylize}}" +
+    "{{#chaos}} --chaos {{chaos}}{{/chaos}}" +
+    "{{#weird}} --weird {{weird}}{{/weird}}" +
+    "{{#seed}} --seed {{seed}}{{/seed}}",
   outputRules: {
-    parameterOrder: ["subject","style_refs","negative","aspect_ratio","model_version","stylize","chaos","weird","seed"],
+    parameterOrder: ["subject","style_refs","negative","aspect_ratio","niji_version","model_version","stylize","chaos","weird","seed"],
     separator: " ", listSeparator: ", ", maxLength: 2000, overflowStrategy: "warn",
     collapseWhitespace: true, trim: true
   }
@@ -141,7 +169,11 @@ const GENERATORS = [
       dependsOn: [ { field: "hires_fix", operator: "truthy" } ],
       description: "Only shown when Hires. fix is on (dependsOn demo)." }
   ],
-  promptTemplate: "{{positive_prompt}}{{#negative_prompt}}\nNegative prompt: {{negative_prompt}}{{/negative_prompt}}\nSteps: {{steps}}, Sampler: {{sampler}}, CFG scale: {{cfg_scale}}, Seed: {{seed}}, Size: {{width}}x{{height}}{{#hires_fix}}, Hires upscaler: {{hires_upscaler}}{{/hires_fix}}",
+  computedTokens: [],
+  promptTemplate:
+    "{{positive_prompt}}{{#negative_prompt}}\nNegative prompt: {{negative_prompt}}{{/negative_prompt}}\n" +
+    "Steps: {{steps}}, Sampler: {{sampler}}, CFG scale: {{cfg_scale}}, Seed: {{seed}}, Size: {{width}}x{{height}}" +
+    "{{#hires_fix}}, Hires upscaler: {{hires_upscaler}}{{/hires_fix}}",
   outputRules: {
     parameterOrder: ["positive_prompt","negative_prompt","steps","sampler","cfg_scale","seed","width","height","hires_fix","hires_upscaler"],
     separator: " ", listSeparator: ", ", overflowStrategy: "warn",
@@ -154,63 +186,6 @@ const $ = (sel) => document.querySelector(sel);
 const form = $("#builder"), out = $("#output"), meta = $("#meta"), sel = $("#gen-select");
 let gen = GENERATORS[0];
 let state = {};
-
-/* ---------- visibility & set-ness (mirrors docs/ARCHITECTURE.md rules) ---------- */
-function isVisible(field) {
-  if (!field.dependsOn) return true;
-  return field.dependsOn.every((c) => {
-    const v = state[c.field];
-    switch (c.operator) {
-      case "equals":    return v === c.value;
-      case "notEquals": return v !== c.value;
-      case "in":        return Array.isArray(c.value) && c.value.includes(v);
-      case "notIn":     return Array.isArray(c.value) && !c.value.includes(v);
-      case "gte":       return Number(v) >= c.value;
-      case "lte":       return Number(v) <= c.value;
-      case "truthy":    return Boolean(v);
-      default:          return false;
-    }
-  });
-}
-function isSet(field) {
-  if (!isVisible(field)) return false;                       // hidden ⇒ unset
-  const v = state[field.key];
-  if (v === undefined || v === null) return false;
-  if (field.type === "boolean") return v === true;
-  if (field.type === "multi") return Array.isArray(v) && v.length > 0;
-  if (String(v).trim() === "") return false;
-  if (field.omitIfDefault && v === field.default) return false;
-  return true;
-}
-function formatValue(field) {
-  if (!isSet(field)) return "";
-  const v = state[field.key];
-  if (field.type === "multi") return v.join(gen.outputRules.listSeparator || ", ");
-  return String(v).trim();
-}
-
-/* ---------- template engine: {{key}} tokens + {{#key}}…{{/key}} sections ---------- */
-function renderPrompt() {
-  const byKey = Object.fromEntries(gen.fields.map((f) => [f.key, f]));
-  let txt = gen.promptTemplate
-    .replace(/\{\{#([a-z][a-z0-9_]*)\}\}([\s\S]*?)\{\{\/\1\}\}/g,
-      (_, key, body) => (byKey[key] && isSet(byKey[key])) ? body : "")
-    .replace(/\{\{([a-z][a-z0-9_]*)\}\}/g,
-      (_, key) => byKey[key] ? formatValue(byKey[key]) : "");
-  const rules = gen.outputRules;
-  if (rules.collapseWhitespace !== false)
-    txt = txt.split("\n").map((l) => l.replace(/[ \t]+/g, rules.separator || " ").trim()).join("\n");
-  if (rules.trim !== false) txt = txt.trim();
-  out.textContent = txt;
-  const n = txt.length;
-  if (rules.maxLength) {
-    meta.textContent = `${n} chars · limit ${rules.maxLength}` + (n > rules.maxLength ? " — OVER LIMIT" : "");
-    meta.className = n > rules.maxLength ? "over" : "";
-  } else {
-    meta.textContent = `${n} chars · no hard limit for this target`;
-    meta.className = "";
-  }
-}
 
 /* ---------- form rendering, one control per schema field ---------- */
 function controlFor(field) {
@@ -244,7 +219,7 @@ function controlFor(field) {
     });
     wrap.append(el, val);
   } else if (field.type === "number") {
-    // numbers WITHOUT a default render as blank-able inputs (unset ⇒ flag omitted)
+    // numbers WITHOUT a default render as blank-able inputs (unset => flag omitted)
     const el = document.createElement("input");
     el.type = "number"; el.id = "f-" + field.key;
     el.min = field.range.min; el.max = field.range.max; el.step = field.range.step ?? 1;
@@ -303,12 +278,25 @@ function buildForm() {
   }
   refresh();
 }
+
 function refresh() {
+  // Show/hide rows based on dependsOn — delegates to engine.isVisible
   for (const f of gen.fields) {
     const row = form.querySelector(`[data-key="${f.key}"]`);
-    if (row) row.classList.toggle("hidden", !isVisible(f));
+    if (row) row.classList.toggle("hidden", !isVisible(f, state));
   }
-  renderPrompt();
+  // Assemble prompt via engine.assemble
+  const { text, charCount, overLimit } = assemble(gen, state);
+  out.textContent = text;
+  const rules = gen.outputRules;
+  if (rules.maxLength) {
+    meta.textContent = `${charCount} chars · limit ${rules.maxLength}` +
+      (overLimit ? " — OVER LIMIT" : "");
+    meta.className = overLimit ? "over" : "";
+  } else {
+    meta.textContent = `${charCount} chars · no hard limit for this target`;
+    meta.className = "";
+  }
 }
 
 /* ---------- generator picker & copy ---------- */

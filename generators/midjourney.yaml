@@ -12,10 +12,10 @@
 id: midjourney
 name: Midjourney
 modality: image
-version: 1.0.0
-targetVersion: "Midjourney v7 parameter set (v5.2–v7 selectable)"
+version: 1.1.0
+targetVersion: "Midjourney v7 parameter set (v5.2–v7 selectable, Niji 5/6)"
 docsUrl: "https://docs.midjourney.com/docs/parameter-list"
-lastVerified: "2026-06-11"
+lastVerified: "2026-06-12"
 
 fields:
   - key: subject
@@ -59,20 +59,36 @@ fields:
       - "21:9"
     description: Output width:height. Always emitted so results are reproducible.
 
+  - key: niji_version
+    label: Niji anime model (--niji)
+    type: enum
+    default: "none"
+    omitIfDefault: true
+    options:
+      - { value: "none", label: "Off — use standard --v model" }
+      - { value: "6",    label: "Niji 6 (current)" }
+      - { value: "5",    label: "Niji 5" }
+    description: >-
+      Selects Midjourney's anime-specialised Niji model. When set to anything
+      other than "Off", the engine emits --niji <version> and the --v flag is
+      suppressed. This flag rename (--niji vs --v) is the canonical use-case for
+      computedTokens: plain token substitution cannot express mutually exclusive
+      flags with different names.
+
   - key: model_version
     label: Model version (--v)
     type: enum
     default: "7"
     options:
-      - { value: "7", label: "v7 (current)" }
+      - { value: "7",   label: "v7 (current)" }
       - { value: "6.1", label: "v6.1" }
-      - { value: "6", label: "v6" }
+      - { value: "6",   label: "v6" }
       - { value: "5.2", label: "v5.2 (legacy)" }
+    dependsOn:
+      - { field: niji_version, operator: equals, value: "none" }
     description: >-
-      Target model. Niji (anime) variants use the distinct --niji flag rather
-      than a --v value, which plain token substitution cannot express; they will
-      ship as a separate plugin or via computed tokens (see
-      docs/ARCHITECTURE.md, Known limitations).
+      Target standard model. Hidden and suppressed from the prompt when the Niji
+      anime model is selected above — exactly one of --v or --niji is emitted.
 
   - key: stylize
     label: Stylize (--stylize)
@@ -110,12 +126,47 @@ fields:
       Fixes the initial noise field for reproducible variations. No default:
       blank means Midjourney picks a random seed and the flag is omitted.
 
+# computedTokens — declarative flag-rename / mutual-exclusion rules.
+#
+# The Niji anime model uses --niji <version> in place of --v <version>. These
+# flags are mutually exclusive and have different names, so plain {{token}}
+# substitution in the template cannot express the rename: there is no single
+# field whose value could produce either "--v 7" or "--niji 6" depending on
+# another field's state.
+#
+# Solution: one computed token `niji_flag` that becomes active when niji_version
+# is not "none". The template has two mutually exclusive branches:
+#   {{#=niji_flag}} --niji {{niji_version}}{{/=niji_flag}}   ← Niji path
+#   {{#model_version}} --v {{model_version}}{{/model_version}} ← standard path
+#
+# model_version has dependsOn: [{ field: niji_version, operator: equals, value: "none" }]
+# so it is invisible (and therefore "unset") whenever niji is active, making the
+# {{#model_version}} section collapse to "". The two branches are mutually exclusive
+# by construction: exactly one is non-empty at any time.
+computedTokens:
+  - id: niji_flag
+    emit: "--niji"
+    description: >-
+      Active when the user selects any Niji anime model. Emits the literal
+      '--niji' flag name; the version number comes from the niji_version field
+      token inside the template section. When inactive (niji_version = "none"),
+      the template falls through to the standard --v model_version branch.
+    when:
+      - { field: niji_version, operator: notEquals, value: "none" }
+
+# Template: two mutually exclusive model-flag branches — exactly one fires.
+#   • Niji path:     {{#=niji_flag}} --niji {{niji_version}}{{/=niji_flag}}
+#                    active when niji_version ≠ "none"
+#   • Standard path: {{#model_version}} --v {{model_version}}{{/model_version}}
+#                    model_version has dependsOn on niji_version=none, so this
+#                    section collapses to "" whenever Niji is active.
 promptTemplate: >-
   {{subject}}{{#style_refs}} --sref {{style_refs}}{{/style_refs}}{{#negative}}
-  --no {{negative}}{{/negative}} --ar {{aspect_ratio}} --v
-  {{model_version}}{{#stylize}} --stylize {{stylize}}{{/stylize}}{{#chaos}}
-  --chaos {{chaos}}{{/chaos}}{{#weird}} --weird {{weird}}{{/weird}}{{#seed}}
-  --seed {{seed}}{{/seed}}
+  --no {{negative}}{{/negative}} --ar {{aspect_ratio}}{{#=niji_flag}}
+  {{=niji_flag}} {{niji_version}}{{/=niji_flag}}{{#model_version}}
+  --v {{model_version}}{{/model_version}}{{#stylize}} --stylize
+  {{stylize}}{{/stylize}}{{#chaos}} --chaos {{chaos}}{{/chaos}}{{#weird}}
+  --weird {{weird}}{{/weird}}{{#seed}} --seed {{seed}}{{/seed}}
 
 outputRules:
   parameterOrder:
@@ -123,6 +174,7 @@ outputRules:
     - style_refs
     - negative
     - aspect_ratio
+    - niji_version
     - model_version
     - stylize
     - chaos
