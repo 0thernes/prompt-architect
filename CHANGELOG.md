@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- **Fixed a stored-XSS vector** (AUDIT-500 finding #1/#2, HIGH): the form renderer assigned untrusted
+  plugin `field.label` via `label.innerHTML`. Now uses `label.textContent` + DOM `appendChild` for the
+  required-field marker; no `innerHTML`/`insertAdjacentHTML`/`outerHTML` sinks remain in `app/`.
+  Verified: html-validate clean, 37/37 engine tests, both plugins valid.
+
 ## [0.1.6] - 2026-06-12
 
 ### Changed

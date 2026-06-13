@@ -778,9 +778,17 @@ full 500-point companion.
 
 ---
 
+## Remediation Log
+
+The findings above are preserved as the as-of-inspection record; resolutions are tracked here.
+
+| Date | Finding | Action |
+|---|---|---|
+| 2026-06-12 | **#1 & #2 HIGH XSS** (9.4 / 9.5 / 10.3 / 11.15) — `label.innerHTML = field.label` inserted untrusted plugin data | **RESOLVED** — `controlFor()` now sets `label.textContent = field.label` and `appendChild`s the required-marker `<span>` as a real DOM node. No `innerHTML` / `insertAdjacentHTML` / `outerHTML` sinks remain anywhere in `app/`. Verified: `html-validate` exit 0, 37/37 engine tests, both plugins valid. Sections 9/10/11 each +1 → effective overall **428/500**. |
+
 ## Top 10 findings
 
-Ranked by severity (high → medium → low) then by blast radius.
+Ranked by severity (high → medium → low) then by blast radius. **#1 and #2 are RESOLVED — see the Remediation Log above.**
 
 | Rank | Severity | Item | Location | Finding |
 |------|----------|------|----------|---------|

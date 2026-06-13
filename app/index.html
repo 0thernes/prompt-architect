@@ -194,7 +194,15 @@ function controlFor(field) {
   const set = (v) => { state[field.key] = v; refresh(); };
   const label = document.createElement("label");
   label.htmlFor = "f-" + field.key;
-  label.innerHTML = field.label + (field.required ? ' <span class="req">*</span>' : "");
+  // textContent (not innerHTML): field.label comes from untrusted plugin YAML — keep it inert (no XSS).
+  label.textContent = field.label;
+  if (field.required) {
+    label.appendChild(document.createTextNode(" "));
+    const req = document.createElement("span");
+    req.className = "req";
+    req.textContent = "*";
+    label.appendChild(req);
+  }
   wrap.appendChild(label);
 
   if (field.type === "string") {
