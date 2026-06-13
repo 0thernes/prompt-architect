@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-06-12
+
+### Changed
+
+- `README.md` — extensive professional-grade rewrite: precise product description
+  covering both creative modes and all modalities; plugin-as-data architecture
+  section; engine section documenting `assemble()` API and pipeline; Mermaid
+  architecture diagram; status badges updated to reflect PoC→MVP state and
+  37-test count; quickstart section (open app, author plugin, run tests); complete
+  repository layout tree with every file annotated; status/roadmap summary table
+  (PoC done, MVP next, v1 planned); complete documentation index linking every
+  doc (MODALITIES, CREATIVE-MODES, corpus, ERD, COMPLEXITY, AUDIT-500, AUDIT,
+  TESTING, OBSERVABILITY, SECURITY-NOTES, ARCHITECTURE, ROADMAP, KANBAN, FAQ);
+  quality-gates summary with evidence; tech-stack section; CC-prompt attribution
+  for corpus.
+- `docs/ARCHITECTURE.md` — deepened: added layer-responsibility table covering
+  meta-schema / plugins / engine / app shell / logger / CI validator; documented
+  engine public API (`assemble`, `isVisible`, `isSet`, `formatValue`); extended
+  template language section to cover `{{=id}}` and `{{#=id}}` computed-token
+  syntax; untrusted-plugin trust boundary section (three enforcement levels,
+  blast-radius rationale for community registry); cross-links to ERD, COMPLEXITY,
+  AUDIT-500, SECURITY-NOTES, ADRs; `constraints[]` and `overflowStrategy:"error"`
+  added to known limitations; `computedTokens` added to plugin model table.
+- `docs/KANBAN.md` — refreshed to reflect all landed work: T-029 (AUDIT-500),
+  T-030 (ERD), T-031 (COMPLEXITY) moved to Done; T-032 (fix
+  `overflowStrategy:"error"`) added to Backlog as a tracked AUDIT-500 finding;
+  Done column narrative updated with all completed card groups and changelog
+  references; board last-updated date added.
+- `docs/ROADMAP.md` — refreshed to reflect PoC complete status: Phase 0 section
+  updated with full "What landed" checklist including engine module, computed
+  tokens, 37-test suite, AUDIT-500, ERD, COMPLEXITY; all four acceptance criteria
+  marked met; Phase 1 open-tasks table added; Phase 2 open-tasks table added;
+  phase headers now include state labels (Complete / Next / Planned).
+
 ## [0.1.5] - 2026-06-12
 
 ### Added

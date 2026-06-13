@@ -3,21 +3,37 @@
 Three phases. Each phase has explicit acceptance criteria; a phase is done when
 every criterion is checkable, not when it "feels done".
 
-## Phase 0 — PoC (current, v0.1.x)
+---
+
+## Phase 0 — PoC (v0.1.x) — **Complete**
 
 **Goal:** prove that one meta-schema can faithfully describe real, dissimilar
 generators and mechanically drive a usable form and a correct prompt.
 
-Scope:
+### What landed
 
 - [x] Meta-schema `schemas/generator.schema.json` (JSON Schema 2020-12)
 - [x] Two reference plugins: `midjourney.yaml` (flag-style syntax),
       `stable-diffusion.yaml` (line-oriented A1111 paste format)
-- [x] Zero-build `app/index.html`: form renderer, template engine, live
-      preview, copy button, length counter
-- [x] CI: Ajv structural validation + semantic lint + html-validate
+- [x] Zero-build `app/index.html`: form renderer, live preview, copy button,
+      length counter
+- [x] `app/engine.js` — extracted ESM prompt-assembly engine (browser + Node,
+      zero deps): `assemble`, `isVisible`, `isSet`, `formatValue`
+- [x] `computedTokens` support: `{{=id}}` scalar and `{{#=id}}…{{/=id}}`
+      conditional section syntax for declarative flag-rename rules
+      (Midjourney `--niji` vs `--v` mutual exclusion)
+- [x] `tests/engine.test.mjs` — 37 unit tests (node:test, zero extra deps)
+      covering token substitution, section blocks, `omitIfDefault`,
+      `dependsOn` gating, parameter ordering, `maxLength` + overflow strategies,
+      computed-token flag rename, `isVisible`/`isSet` edge cases
+- [x] CI: Ajv structural validation + semantic lint + html-validate +
+      `node --test` engine tests
+- [x] `docs/AUDIT-500.md` — 500-point / 25-section deep inspection (425/500)
+- [x] `docs/ERD.md` — full Mermaid entity-relationship diagram + ERM
+      invariants + ERP sequence and state diagrams
+- [x] `docs/COMPLEXITY.md` — Big-O time and space analysis for all operations
 
-**Acceptance criteria**
+### Acceptance criteria (all met)
 
 1. `node scripts/validate.mjs` exits 0; introducing any of these makes it exit
    non-zero: an unknown template token, a field missing from `parameterOrder`,
@@ -28,12 +44,14 @@ Scope:
    it on reveals the upscaler field and appends it (dependsOn proven working).
 4. The assembled Midjourney prompt shows a visible warning beyond 2000 chars.
 
-## Phase 1 — MVP (v0.2 – v0.5)
+---
+
+## Phase 1 — MVP (v0.2 – v0.5) — **Next**
 
 **Goal:** daily-drivable tool for one real user (the founder), installable as a
 PWA, covering the generators actually in rotation — in both creative modes.
 
-Scope:
+### Scope
 
 - Plugin loader: fetch + parse `generators/*.yaml` at runtime (replaces the
   embedded PoC objects); meta-schema validation in the browser with friendly
@@ -50,7 +68,24 @@ Scope:
   (Unicode block browser + recents), named glyph-prompt saves in localStorage,
   copy-raw action
 
-**Acceptance criteria**
+### Open tasks
+
+| ID | Task | Priority |
+|----|------|----------|
+| T-001 | Runtime plugin loader (fetch + parse YAML) | P1 |
+| T-003 | Plugin: Runway Gen-3/4 video | P2 |
+| T-004 | Plugin: Suno v4 audio | P2 |
+| T-005 | Plugin: Luma Dream Machine video | P2 |
+| T-006 | Plugin: DALL·E 3 image | P2 |
+| T-007 | Preset save/load per generator | P1 |
+| T-008 | Prompt history with plugin id+version | P1 |
+| T-009 | PWA manifest + service worker | P2 |
+| T-011 | `lastVerified` staleness CI report | P2 |
+| T-019 | Glyph Canvas Unicode/emoji palette UI | P2 |
+| T-020 | Glyph Canvas named save / curate / history | P2 |
+| T-021 | Complexity-tier toggle + field `tier` hint | P1 |
+
+### Acceptance criteria
 
 1. A new plugin dropped into `generators/` appears in the UI with zero code
    changes (verified by adding a throwaway plugin in a test).
@@ -64,13 +99,15 @@ Scope:
    combining characters and emoji) without mangling; saved glyph prompts
    persist across browser restarts.
 
-## Phase 2 — v1 (community)
+---
+
+## Phase 2 — v1 (community) — **Planned**
 
 **Goal:** the plugin corpus grows faster than one maintainer can write it,
 without ever executing third-party code; and the Glyph Canvas reaches full
 composition-tool maturity.
 
-Scope:
+### Scope
 
 - Community plugin registry: static JSON index + content hashes; submission =
   PR into a registry repo gated by the same CI validator
@@ -98,7 +135,25 @@ Scope:
   in entropy mode (T1-T6 scaffolding active) or structural/order mode (T7 pole
   active), with a one-tap flip to mirror the current composition across the axis
 
-**Acceptance criteria**
+### Open tasks
+
+| ID | Task | Priority |
+|----|------|----------|
+| T-010 | Export/import presets + history as JSON | P2 |
+| T-012 | Community plugin registry | P3 |
+| T-013 | Plugin signing / integrity verification | P3 |
+| T-014 | Declarative `constraints[]` in meta-schema | P3 |
+| T-015 | i18n of field labels | P3 |
+| T-016 | Plugin: Udio music | P2 |
+| T-017 | Plugin: Meshy 3D | P3 |
+| T-018 | Plugin: Skybox AI world | P3 |
+| T-022 | Plugin pack: video (Runway + Pika + Luma) | P2 |
+| T-023 | Glyph Canvas colour tagging + HTML export | P3 |
+| T-024 | Glyph Canvas entropy-technique library UI (T1-T7) | P2 |
+| T-025 | Glyph Canvas corpus import / save / export | P2 |
+| T-026 | Glyph Canvas inverse-dual mode toggle | P3 |
+
+### Acceptance criteria
 
 1. At least one third-party plugin merged with no maintainer code changes —
    the CI gate alone decided.
@@ -109,6 +164,8 @@ Scope:
    plugins still validating.
 5. A glyph-prompt composition with colour tags exports as a styled HTML
    fragment that renders correctly in a modern browser.
+
+---
 
 ## Non-goals (all phases)
 

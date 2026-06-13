@@ -1,5 +1,7 @@
 # Kanban board — Prompt Architect
 
+Last updated: 2026-06-12
+
 ## WIP limits
 
 | Column | Limit | Rationale |
@@ -20,10 +22,13 @@ A card moves to **Done** only when every item in its Definition of Done is check
 | ID | Title | Column | Priority | Estimate |
 |----|-------|--------|----------|----------|
 | T-001 | Runtime plugin loader (fetch + parse YAML) | Ready | P1 | M |
-| T-002 | Computed tokens — `emit` map for flag-rename cases (e.g. --niji) | Done | P1 | M |
-| T-027 | Extract template engine to `app/engine.js` (ESM, browser + Node) | Done | P1 | M |
-| T-028 | Unit-test suite `tests/engine.test.mjs` (node:test, 37 cases) | Done | P1 | S |
-| T-003 | Plugin: Runway Gen-3 video generator | Ready | P2 | S |
+| T-002 | Computed tokens — `emit` map for flag-rename cases (e.g. --niji) | **Done** | P1 | M |
+| T-027 | Extract template engine to `app/engine.js` (ESM, browser + Node) | **Done** | P1 | M |
+| T-028 | Unit-test suite `tests/engine.test.mjs` (node:test, 37 cases) | **Done** | P1 | S |
+| T-029 | AUDIT-500 deep inspection (500-pt / 25-section, 425/500) | **Done** | P1 | L |
+| T-030 | ERD — entity-relationship diagram + ERM invariants + ERP sequence/state diagrams | **Done** | P2 | M |
+| T-031 | COMPLEXITY.md — Big-O time/space analysis for all operations | **Done** | P2 | S |
+| T-003 | Plugin: Runway Gen-3/4 video generator | Ready | P2 | S |
 | T-004 | Plugin: Suno v4 audio/music generator | Ready | P2 | S |
 | T-005 | Plugin: Luma Dream Machine video | Backlog | P2 | S |
 | T-006 | Plugin: DALL·E 3 image | Backlog | P2 | S |
@@ -47,13 +52,15 @@ A card moves to **Done** only when every item in its Definition of Done is check
 | T-024 | Glyph Canvas — entropy-technique library UI (T1-T7): negative-constraint stack builder, keyword-avalanche palette, contradiction toggle, inverse-dual flip | Backlog | P2 | L |
 | T-025 | Glyph Canvas — corpus import / save / export (paste or file import; save with technique tags; export full corpus as JSON or Markdown) | Backlog | P2 | M |
 | T-026 | Glyph Canvas — inverse-dual mode toggle (persistent entropy/order axis toggle; one-tap composition mirror across T7 pole) | Backlog | P3 | M |
+| T-032 | Fix `overflowStrategy:"error"` — implement error throw branch in engine.js (AUDIT-500 finding 1.20) | Backlog | P2 | S |
 
 ---
 
 ## Column detail
 
 ### Backlog
-T-005, T-006, T-008, T-009, T-010, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020, T-021, T-022, T-023, T-024, T-025, T-026
+T-005, T-006, T-008, T-009, T-010, T-012, T-013, T-014, T-015, T-016, T-017,
+T-018, T-019, T-020, T-021, T-022, T-023, T-024, T-025, T-026, T-032
 
 ### Ready
 T-001 · T-003 · T-004 · T-007 · T-011
@@ -65,4 +72,6 @@ _(empty)_
 _(empty)_
 
 ### Done
-T-002 · T-027 · T-028 — see CHANGELOG.md [0.1.3] for details._
+T-002 · T-027 · T-028 — engine module, computed tokens, unit tests (CHANGELOG [0.1.3])
+T-029 — AUDIT-500 deep inspection 425/500 (CHANGELOG [0.1.4])
+T-030 · T-031 — ERD and Complexity docs (CHANGELOG [0.1.5])
