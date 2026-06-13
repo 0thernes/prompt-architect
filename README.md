@@ -180,6 +180,8 @@ Current work state, WIP limits, and all backlog cards live in
 | [`docs/FAQ.md`](docs/FAQ.md) | Common questions answered honestly |
 | [`docs/MODALITIES.md`](docs/MODALITIES.md) | All-modality coverage map, tool lists, art-school taxonomy, complexity tiers |
 | [`docs/CREATIVE-MODES.md`](docs/CREATIVE-MODES.md) | Structured vs Glyph-Canvas mode; entropy practice; Unicode/colour tooling spec |
+| [`docs/ERD.md`](docs/ERD.md) | ERD/ERM/ERP — full data-model diagram, relationship cardinalities, invariants, and runtime process (sequence + state diagrams) |
+| [`docs/COMPLEXITY.md`](docs/COMPLEXITY.md) | Big-O time and space complexity for every operation; worked 50-field example |
 
 ## License
 

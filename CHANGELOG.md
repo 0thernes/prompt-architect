@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-06-12
+
+### Added
+
+- `docs/ERD.md` — three-view data-model reference: Mermaid `erDiagram` of the
+  full plugin/prompt data model (GENERATOR_PLUGIN, FIELD, RANGE, OPTION,
+  CONDITION, PROMPT_TEMPLATE, OUTPUT_RULES, COMPUTED_TOKEN, MODALITY,
+  ASSEMBLED_PROMPT) with attributes matching the meta-schema; ERM section
+  documenting the meta-schema-governs-plugins relationship, `dependsOn` DAG
+  invariants, template token integrity contract, `parameterOrder` single-source-
+  of-truth rule, and modality coverage cardinalities; ERP section with Mermaid
+  `sequenceDiagram` (structured-mode load → form render → value capture →
+  assemble → preview; Glyph Canvas path) and `stateDiagram` for the
+  `dependsOn` visibility state machine and the structured vs Glyph-Canvas mode
+  branch.
+- `docs/COMPLEXITY.md` — Big-O time and space analysis for every major
+  operation: form render O(F), full visibility sweep O(E), `assemble()` O(F +
+  C + I_c + T) dominated by O(T), schema validation O(S), semantic lint O(F +
+  T + C + E), `dependsOn` DAG cycle check O(V+E). Operation table, dominant-
+  term analysis, worked 50-field "Everything"-tier example with per-step
+  operation counts and space breakdown. Cross-linked to MODALITIES.md and
+  ARCHITECTURE.md.
+
+### Changed
+
+- `README.md` — added `docs/ERD.md` and `docs/COMPLEXITY.md` rows to the
+  Quality and audit table.
+
 ## [0.1.4] - 2026-06-12
 
 ### Added
