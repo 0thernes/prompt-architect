@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-06-12
+
+### Added
+
+- `docs/AUDIT-500.md` — 500-point / 25-section deep inspection grounded in every
+  source file (`app/`, `schemas/`, `generators/`, `scripts/`, `tests/`,
+  `.github/`, `docs/`, `corpus/`). 25 sections × ~20 concrete, repo-specific
+  checkboxes; per-section scores (/20); overall score 425/500; ranked Top 10
+  findings. Covers: correctness, algorithms, time/space complexity, schema design
+  (JSON Schema 2020-12), plugin model, template-engine semantics, determinism,
+  plugin-trust & supply chain, XSS/injection security, input validation, error
+  handling, WCAG 2.1 AA accessibility, no-build discipline, testing strategy,
+  CI/CD quality gates, build/release, documentation, API design, code style,
+  architecture, data model integrity, observability/privacy, licensing/provenance,
+  and maintainability/DX/governance.
+
+### Changed
+
+- `docs/AUDIT.md` — cross-link to AUDIT-500.md added at the top with overall
+  score summary.
+- `README.md` — `docs/AUDIT-500.md` row added to the Quality and audit table.
+
 ## [0.1.3] - 2026-06-12
 
 ### Added

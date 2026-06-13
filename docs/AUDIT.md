@@ -1,5 +1,9 @@
 # Self-audit checklist — Prompt Architect
 
+> **Deep inspection:** [`AUDIT-500.md`](AUDIT-500.md) — 500-point / 25-section analysis
+> grounded in every source file, with per-section scores and a ranked Top 10 findings list.
+> Overall score: **425 / 500** (2026-06-12).
+
 A gold-standard checklist for reviewing the project's quality before any
 significant release or before inviting community contributions. Work through
 each category and tick items as they are verified. An unchecked item is a

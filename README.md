@@ -173,6 +173,7 @@ Current work state, WIP limits, and all backlog cards live in
 | Document | What it covers |
 |----------|----------------|
 | [`docs/AUDIT.md`](docs/AUDIT.md) | Self-audit checklist (correctness, security, plugin trust, accessibility) |
+| [`docs/AUDIT-500.md`](docs/AUDIT-500.md) | 500-point / 25-section deep inspection — per-section scores, Top 10 findings (425/500, 2026-06-12) |
 | [`docs/TESTING.md`](docs/TESTING.md) | Test strategy, pyramid, coverage targets, how to run |
 | [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md) | Structured log schema, event catalogue, `app/logger.js` |
 | [`docs/SECURITY-NOTES.md`](docs/SECURITY-NOTES.md) | Defensive security posture — assets, trust model, mitigations |
